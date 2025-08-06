@@ -1,6 +1,8 @@
 package co.edu.sena.ferregestion.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+
 
 import java.math.BigDecimal;
 
@@ -9,6 +11,13 @@ import java.math.BigDecimal;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotBlank(message = "El nombre del producto es obligatorio")
+    @NotBlank(message = "La categoría es obligatoria")
+    @NotNull(message = "El precio es obligatorio")
+    @Positive(message = "El precio debe ser mayor que cero")
+    @NotNull(message = "La cantidad disponible es obligatoria")
+    @Min(value = 0, message = "La cantidad no puede ser negativa")
+    @NotNull(message = "Debe seleccionar un proveedor")
     private long id;
     private String name;
     private String catgeory;
