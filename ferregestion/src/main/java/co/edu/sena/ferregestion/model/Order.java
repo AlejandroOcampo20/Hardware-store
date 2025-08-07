@@ -11,14 +11,18 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private Date date;
+    
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "client_id")
     private Client id_client;
+
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "employee_id")
     private Employee id_employee;
+
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "product_id")
+
     private Product id_product;
     private long quantity;
     private String status;
