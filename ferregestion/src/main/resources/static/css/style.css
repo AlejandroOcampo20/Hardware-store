@@ -1,0 +1,39 @@
+.bg-orange {
+  background-color: #fd7e14;
+}
+
+.nav-pills .nav-link {
+    color: #000; /* Color negro para el texto */
+}
+
+.nav-pills .nav-link:hover,
+.nav-pills .nav-link:focus,
+.nav-pills .nav-link.active { /* Color naranja de Bootstrap */
+    color: #fd7e14; /* Texto blanco cuando está activo/hover */
+}
+
+#sidebarMenu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100%;
+  background: #000;
+  transition: transform 0.3s ease;
+  z-index: 1000;
+  transform: translateX(0);
+}
+
+#sidebarMenu.collapsed {
+  transform: translateX(-100%);
+}
+
+body:not(.sidebar-collapsed) .d_flex {
+  margin-left: 250px;
+  transition: margin-left 0.3s ease;
+}
+
+body.sidebar-collapsed .d_flex {
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+}

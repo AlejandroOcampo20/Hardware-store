@@ -24,7 +24,7 @@ public class Product {
     private BigDecimal price;
     private long quantity;
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "id_supplier")
     private Supplier id_supplier;
 
     public long getId() {
