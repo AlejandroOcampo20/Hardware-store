@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}"></head>
+<body>
+
+    <!-- Inyecta la barra superior -->
+    <div th:replace="~{fragments/topbar :: topbar}"></div>
+
+    <div class="d_flex">
+
+        <!-- Inyecta la barra lateral -->
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+        <main>
+            <div class="container mt-4">
+                <h1>Bienvenido al software de gestion de Ferreteria</h1>
+                <p>Explora nuestras funcionalidades y administra tus productos, clientes y pedidos con facilidad. ¡Disfruta de una experiencia de uso fluida y intuitiva!</p>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- Inyecta el footer y scripts -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/scripts :: scripts}"></div>
+</body>
+</html>
