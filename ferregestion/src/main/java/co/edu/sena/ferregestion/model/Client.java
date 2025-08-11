@@ -1,32 +1,52 @@
 package co.edu.sena.ferregestion.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name="client")
+@Table(name = "clients")
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotBlank(message = "El nombre es obligatorio")
-    @NotBlank(message = "La dirección es obligatoria")
-    @NotNull(message = "El teléfono es obligatorio")
-    @Email(message = "El correo no es válido")
-    private long id;
+    private Integer id;
+
+    @Column(nullable = false, length = 100)
     private String name;
-    private long phone;
-    private String address;
+
+    @Column(unique = true, length = 20)
+    private String document;
+
+    @Column(length = 20)
+    private String phone;
+
+    @Column(length = 100)
     private String email;
 
+    @Column(length = 200)
+    private String address;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "is_active")
+    private Boolean isActive = true;
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<Sale> sales;
+
+    public Client() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // Getters y Setters...
 
 
-    public long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -38,12 +58,28 @@ public class Client {
         this.name = name;
     }
 
-    public long getPhone() {
+    public String getDocument() {
+        return document;
+    }
+
+    public void setDocument(String document) {
+        this.document = document;
+    }
+
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(long phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getAddress() {
@@ -54,11 +90,27 @@ public class Client {
         this.address = address;
     }
 
-    public String getEmail() {
-        return email;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public List<Sale> getSales() {
+        return sales;
+    }
+
+    public void setSales(List<Sale> sales) {
+        this.sales = sales;
     }
 }
