@@ -23,8 +23,8 @@
                 <!-- Panel de productos -->
                 <div class="col-lg-7">
                     <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Agregar Productos</h6>
+                        <div class="card-header py-3 ">
+                            <h6 class="m-0 font-weight-bold text-white">Agregar Productos</h6>
                         </div>
                         <div class="card-body">
                             <form th:action="@{/sales/add-to-cart}" method="post">
@@ -62,7 +62,7 @@
                 <div class="col-lg-5">
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Carrito de Compras</h6>
+                            <h6 class="m-0 font-weight-bold text-white">Carrito de Compras</h6>
                         </div>
                         <div class="card-body">
                             <div th:if="${#maps.isEmpty(cart)}" class="text-center text-muted">
@@ -130,7 +130,9 @@
                                         <textarea class="form-control" name="notes" rows="2"></textarea>
                                     </div>
 
-                                    <button type="submit" class="btn btn-success btn-block">Completar Venta</button>
+                                    <button class="btn btn-success btn-block" onclick="window.print()" type="submit">
+                                        Completar Venta
+                                    </button>
                                 </form>
                             </div>
                         </div>

@@ -1,0 +1,25 @@
+:root {
+    --primary-orange: #FF8000;
+    --light-orange: #FFB366;
+    --dark-orange: #CC6600;
+}
+
+.bg-orange {
+    background-color: var(--primary-orange) !important;
+}
+
+.btn-orange {
+    background-color: var(--primary-orange);
+    border-color: var(--primary-orange);
+    color: white;
+}
+
+.btn-orange:hover {
+    background-color: var(--dark-orange);
+    border-color: var(--dark-orange);
+    color: white;
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
