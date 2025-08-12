@@ -1,23 +1,50 @@
 package co.edu.sena.ferregestion.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "supplier")
+@Table(name = "suppliers")
 public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private String name;
-    private String address;
-    private long phone;
-    private String product;
+    private Integer id;
 
-    public long getId() {
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    @Column(length = 20)
+    private String phone;
+
+    @Column(length = 100)
+    private String email;
+
+    @Column(length = 200)
+    private String address;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "is_active")
+    private Boolean isActive = true;
+
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL)
+    private List<Product> products;
+
+    // Constructor, getters y setters
+    public Supplier() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // Getters y Setters...
+
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -29,6 +56,22 @@ public class Supplier {
         this.name = name;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getAddress() {
         return address;
     }
@@ -37,19 +80,27 @@ public class Supplier {
         this.address = address;
     }
 
-    public long getPhone() {
-        return phone;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setPhone(long phone) {
-        this.phone = phone;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public String getProduct() {
-        return product;
+    public Boolean getActive() {
+        return isActive;
     }
 
-    public void setProduct(String product) {
-        this.product = product;
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 }

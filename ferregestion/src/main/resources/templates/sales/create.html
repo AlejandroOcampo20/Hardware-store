@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}"></head>
+<body>
+
+<!-- Inyecta la barra superior -->
+<div th:replace="~{fragments/topbar :: topbar}"></div>
+
+<div class="d_flex">
+
+    <!-- Inyecta la barra lateral -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <main>
+        <div class="container-fluid">
+            <h1 class="h3 mb-4 text-gray-800">Nueva Venta</h1>
+
+            <!-- Alertas -->
+            <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+            <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
+
+            <div class="row">
+                <!-- Panel de productos -->
+                <div class="col-lg-7">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Agregar Productos</h6>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/sales/add-to-cart}" method="post">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Producto</label>
+                                            <select class="form-control" name="productId" required>
+                                                <option value="">Seleccionar producto...</option>
+                                                <option th:each="product : ${products}"
+                                                        th:value="${product.id}"
+                                                        th:text="${product.name + ' - $' + product.price + ' (Stock: ' + product.stock + ')'}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Cantidad</label>
+                                            <input type="number" class="form-control" name="quantity" min="1" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>&nbsp;</label>
+                                            <button type="submit" class="btn btn-primary btn-block">Agregar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel del carrito -->
+                <div class="col-lg-5">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Carrito de Compras</h6>
+                        </div>
+                        <div class="card-body">
+                            <div th:if="${#maps.isEmpty(cart)}" class="text-center text-muted">
+                                El carrito está vacío
+                            </div>
+
+                            <div th:unless="${#maps.isEmpty(cart)}">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Cant.</th>
+                                            <th>Subtotal</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="item : ${cart.values()}">
+                                            <td th:text="${item.productName}"></td>
+                                            <td th:text="${item.quantity}"></td>
+                                            <td th:text="'$' + ${item.subtotal}"></td>
+                                            <td>
+                                                <form th:action="@{/sales/remove-from-cart}" method="post" style="display:inline;">
+                                                    <input type="hidden" name="productId" th:value="${item.productId}">
+                                                    <button type="submit" class="btn btn-danger btn-sm">×</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <th colspan="2">Total:</th>
+                                            <th th:text="'$' + ${#aggregates.sum(cart.values().![subtotal])}"></th>
+                                            <th></th>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+
+                                <!-- Formulario de venta -->
+                                <form th:action="@{/sales/complete-sale}" method="post">
+                                    <div class="form-group">
+                                        <label>Empleado</label>
+                                        <select class="form-control" name="employeeId" required>
+                                            <option value="">Seleccionar empleado...</option>
+                                            <option th:each="employee : ${employees}"
+                                                    th:value="${employee.id}"
+                                                    th:text="${employee.name}"></option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Cliente (Opcional)</label>
+                                        <select class="form-control" name="clientId">
+                                            <option value="">Sin cliente...</option>
+                                            <option th:each="client : ${clients}"
+                                                    th:value="${client.id}"
+                                                    th:text="${client.name}"></option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Notas</label>
+                                        <textarea class="form-control" name="notes" rows="2"></textarea>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-success btn-block">Completar Venta</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</div>
+
+<!-- Inyecta el footer y scripts -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+</body>
+</html>
