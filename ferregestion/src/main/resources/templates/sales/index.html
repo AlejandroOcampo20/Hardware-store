@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}"></head>
+<body class="bg-light">
+
+<!-- Topbar -->
+<div th:replace="~{fragments/topbar :: topbar}"></div>
+
+<!-- Sidebar -->
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<!-- Overlay para móvil -->
+<div class="sidebar-overlay"></div>
+
+<!-- Contenido principal -->
+<main>
+    <div class="container-fluid px-4 py-3">
+
+        <!-- Título y botón -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 text-dark">Gestión de Ventas</h1>
+            <a class="btn btn-primary btn-sm d-flex align-items-center" href="/sales/create">
+                <i class="bi bi-plus-circle me-1"></i> Nueva Venta
+            </a>
+        </div>
+
+        <!-- Alertas -->
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${error}">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+            <span th:text="${error}"></span>
+            <button class="btn-close" data-bs-dismiss="alert" type="button"></button>
+        </div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${success}">
+            <i class="bi bi-check-circle-fill me-1"></i>
+            <span th:text="${success}"></span>
+            <button class="btn-close" data-bs-dismiss="alert" type="button"></button>
+        </div>
+
+        <!-- Filtros -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label" for="statusFilter">Estado</label>
+                        <select class="form-select" id="statusFilter">
+                            <option value="">Todos</option>
+                            <option value="COMPLETED">Completadas</option>
+                            <option value="PENDING">Pendientes</option>
+                            <option value="CANCELLED">Canceladas</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="dateFilter">Fecha</label>
+                        <input class="form-control" id="dateFilter" type="date">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="searchFilter">Buscar</label>
+                        <input class="form-control" id="searchFilter" placeholder="Cliente o empleado..." type="text">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-outline-secondary w-100" onclick="clearFilters()" type="button">
+                            <i class="bi bi-arrow-counterclockwise"></i> Limpiar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumen de Ventas -->
+        <div class="row g-4 mb-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <div class="text-muted small">Completadas</div>
+                                <div class="h5 mb-0 fw-bold"
+                                     th:text="${#lists.size(sales.?[status.name() == 'COMPLETED'])}">0
+                                </div>
+                            </div>
+                            <div class="col-4 text-end">
+                                <i class="bi bi-check-circle text-success" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <div class="text-muted small">Pendientes</div>
+                                <div class="h5 mb-0 fw-bold"
+                                     th:text="${#lists.size(sales.?[status.name() == 'PENDING'])}">0
+                                </div>
+                            </div>
+                            <div class="col-4 text-end">
+                                <i class="bi bi-clock text-warning" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-left-danger shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <div class="text-muted small">Canceladas</div>
+                                <div class="h5 mb-0 fw-bold"
+                                     th:text="${#lists.size(sales.?[status.name() == 'CANCELLED'])}">0
+                                </div>
+                            </div>
+                            <div class="col-4 text-end">
+                                <i class="bi bi-x-circle text-danger" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <div class="text-muted small">Total Vendido</div>
+                                <div class="h5 mb-0 fw-bold">
+                                    $<span
+                                        th:text="${#numbers.formatDecimal(#aggregates.sum(sales.?[status.name() == 'COMPLETED'].![total]), 1, 0)}">0</span>
+                                </div>
+                            </div>
+                            <div class="col-4 text-end">
+                                <i class="bi bi-currency-dollar text-info" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Ventas -->
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-cart-fill me-1"></i> Lista de Ventas
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="dataTable">
+                        <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Empleado</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="sale : ${sales}">
+                            <td th:text="'#' + ${sale.id}">#001</td>
+                            <td th:text="${#temporals.format(sale.saleDate, 'dd/MM/yyyy HH:mm')}">01/01/2024</td>
+                            <td th:text="${sale.client?.name ?: 'Venta al público'}">Cliente</td>
+                            <td th:text="${sale.employee.name}">Empleado</td>
+                            <td class="text-end fw-bold">
+                                $<span th:text="${#numbers.formatDecimal(sale.total, 1, 0)}">0</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-success" th:if="${sale.status.name() == 'COMPLETED'}"
+                                      th:text="${sale.status.displayName}">Completada</span>
+                                <span class="badge bg-warning text-dark" th:if="${sale.status.name() == 'PENDING'}"
+                                      th:text="${sale.status.displayName}">Pendiente</span>
+                                <span class="badge bg-danger" th:if="${sale.status.name() == 'CANCELLED'}"
+                                      th:text="${sale.status.displayName}">Cancelada</span>
+                            </td>
+                            <td>
+                                <a class="btn btn-sm btn-info me-1" th:href="@{/sales/view/{id}(id=${sale.id})}"
+                                   title="Ver detalle">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <form method="post"
+                                      onsubmit="return confirm('¿Está seguro de cancelar esta venta? Se restaurará el stock.')"
+                                      style="display: inline;"
+                                      th:action="@{/sales/cancel/{id}(id=${sale.id})}"
+                                      th:if="${sale.status.name() != 'CANCELLED'}">
+                                    <button class="btn btn-sm btn-danger" title="Cancelar venta" type="submit">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- Scripts -->
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+</html>
