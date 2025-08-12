@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte - FerreGestión</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; padding: 30px; color: #333; }
+        .header { text-align: center; border-bottom: 2px solid #fd7e14; padding-bottom: 15px; margin-bottom: 20px; }
+        .header h2 { color: #fd7e14; margin: 0; }
+        .info { margin-bottom: 20px; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f8f9fa; font-weight: bold; }
+        .footer { margin-top: 40px; font-size: 12px; color: #666; text-align: center; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h2>FerreGestión</h2>
+    <p>Reporte de <span th:text="${reportType}">Ventas</span></p>
+    <p>Generado el: <span th:text="${#temporals.format(generatedAt, 'dd/MM/yyyy HH:mm')}"></span></p>
+</div>
+
+<div class="info">
+    <p><strong>Total de registros:</strong> <span th:text="${#lists.size(items)}">0</span></p>
+</div>
+
+<!-- Tabla: Ventas del Día / Mes -->
+<div th:if="${reportType == 'Ventas del Día' or reportType == 'Ventas del Mes'}">
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Empleado</th>
+            <th>Fecha</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="venta : ${items}">
+            <td th:text="${venta.id}">#1</td>
+            <td th:text="${venta.client?.name ?: 'Venta al público'}">Cliente</td>
+            <td th:text="${venta.employee.name}">Juan</td>
+            <td th:text="${#temporals.format(venta.saleDate, 'dd/MM/yyyy HH:mm')}">01/04/2025</td>
+            <td class="text-right">$<span th:text="${#numbers.formatDecimal(venta.total, 1, 0)}">0</span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Tabla: Inventario Bajo -->
+<div th:if="${reportType == 'Inventario Bajo'}">
+    <table>
+        <thead>
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Stock</th>
+            <th>Stock Mínimo</th>
+            <th>Precio</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="producto : ${items}">
+            <td th:text="${producto.code}">PROD001</td>
+            <td th:text="${producto.name}">Taladro</td>
+            <td class="text-center" th:text="${producto.stock}">5</td>
+            <td class="text-center" th:text="${producto.minStock}">10</td>
+            <td class="text-right">$<span th:text="${#numbers.formatDecimal(producto.price, 1, 0)}">0</span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Tabla: Clientes -->
+<div th:if="${reportType == 'Listado de Clientes'}">
+    <table>
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Documento</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="cliente : ${items}">
+            <td th:text="${cliente.name}">Carlos Pérez</td>
+            <td th:text="${cliente.document}">12345678</td>
+            <td th:text="${cliente.phone}">(300) 123-4567</td>
+            <td th:text="${cliente.email}">carlos@email.com</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Tabla: Proveedores -->
+<div th:if="${reportType == 'Listado de Proveedores'}">
+    <table>
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Contacto</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="proveedor : ${items}">
+            <td th:text="${proveedor.name}">Distribuidora ABC</td>
+            <td th:text="${proveedor.contactName}">María Gómez</td>
+            <td th:text="${proveedor.phone}">(300) 987-6543</td>
+            <td th:text="${proveedor.email}">contacto@abc.com</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Tabla: Empleados -->
+<div th:if="${reportType == 'Listado de Empleados'}">
+    <table>
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Rol</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="empleado : ${items}">
+            <td th:text="${empleado.name}">Ana López</td>
+            <td th:text="${empleado.role}">ADMINISTRADOR</td>
+            <td th:text="${empleado.phone}">(300) 555-1234</td>
+            <td th:text="${empleado.email}">ana@ferregestion.com</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="footer">
+    &copy; <span th:text="${#temporals.format(generatedAt, 'yyyy')}">2025</span> FerreGestión - Sistema de Gestión Integral
+</div>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}"></head>
+<body class="bg-light">
+
+<!-- Topbar -->
+<div th:replace="~{fragments/topbar :: topbar}"></div>
+
+<!-- Sidebar -->
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<!-- Overlay para móvil -->
+<div class="sidebar-overlay"></div>
+
+<!-- Contenido principal -->
+<main>
+    <div class="container-fluid px-4 py-3">
+
+        <!-- Título y botón -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 text-dark">Detalle de Venta #<span th:text="${sale.id}"></span></h1>
+            <a class="btn btn-secondary btn-sm d-flex align-items-center" href="/sales">
+                <i class="bi bi-arrow-left me-1"></i> Volver
+            </a>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- Información de la Venta -->
+            <div class="col-lg-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h6 class="m-0"><i class="bi bi-receipt me-1"></i> Información de la Venta</h6>
+                        <span class="badge bg-success" th:if="${sale.status.name() == 'COMPLETED'}"
+                              th:text="${sale.status.displayName}">Completada</span>
+                        <span class="badge bg-warning text-dark" th:if="${sale.status.name() == 'PENDING'}"
+                              th:text="${sale.status.displayName}">Pendiente</span>
+                        <span class="badge bg-danger" th:if="${sale.status.name() == 'CANCELLED'}"
+                              th:text="${sale.status.displayName}">Cancelada</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>ID de Venta:</strong> #<span th:text="${sale.id}"></span></p>
+                                <p><strong>Fecha:</strong> <span
+                                        th:text="${#temporals.format(sale.saleDate, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
+                                <p><strong>Empleado:</strong> <span th:text="${sale.employee.name}"></span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Cliente:</strong> <span
+                                        th:text="${sale.client?.name ?: 'Venta al público'}"></span></p>
+                                <p th:if="${sale.client != null}"><strong>Documento:</strong> <span
+                                        th:text="${sale.client.document}"></span></p>
+                                <p th:if="${sale.client != null}"><strong>Teléfono:</strong> <span
+                                        th:text="${sale.client.phone}"></span></p>
+                            </div>
+                        </div>
+                        <div class="row" th:if="${sale.notes != null and !#strings.isEmpty(sale.notes)}">
+                            <div class="col-12 mt-3">
+                                <p><strong>Notas:</strong></p>
+                                <div class="alert alert-info" th:text="${sale.notes}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detalle de Productos -->
+                <div class="card shadow mt-4">
+                    <div class="card-header bg-success text-white">
+                        <i class="bi bi-cart-check me-1"></i> Productos Vendidos
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Producto</th>
+                                    <th>Cant.</th>
+                                    <th>Precio</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="detail : ${details}">
+                                    <td th:text="${detail.product.code}">PROD001</td>
+                                    <td>
+                                        <strong th:text="${detail.product.name}"></strong><br>
+                                        <small class="text-muted" th:text="${detail.product.description}"></small>
+                                    </td>
+                                    <td class="text-center" th:text="${detail.quantity}">2</td>
+                                    <td class="text-end">
+                                        $<span th:text="${#numbers.formatDecimal(detail.unitPrice, 1, 0)}">0</span>
+                                    </td>
+                                    <td class="text-end fw-bold">
+                                        $<span th:text="${#numbers.formatDecimal(detail.subtotal, 1, 0)}">0</span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <tfoot>
+                                <tr class="bg-light fw-bold">
+                                    <td class="text-end" colspan="4">Total de la Venta:</td>
+                                    <td class="text-end">
+                                        $<span th:text="${#numbers.formatDecimal(sale.total, 1, 0)}">0</span>
+                                    </td>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de Acciones y Resumen -->
+            <div class="col-lg-4">
+
+                <!-- Acciones -->
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <i class="bi bi-tools me-1"></i> Acciones
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2 mb-3">
+                            <button class="btn btn-primary" onclick="window.print()" type="button">
+                                <i class="bi bi-printer me-1"></i> Imprimir Factura
+                            </button>
+                        </div>
+
+                        <!-- Cancelar venta -->
+                        <form method="post"
+                              onsubmit="return confirm('¿Está seguro de cancelar esta venta? Se restaurará el stock.')"
+                              th:action="@{/sales/cancel/{id}(id=${sale.id})}"
+                              th:if="${sale.status.name() == 'COMPLETED'}">
+                            <button class="btn btn-danger w-100" type="submit">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar Venta
+                            </button>
+                        </form>
+
+                        <!-- Estado cancelado -->
+                        <div class="alert alert-danger text-center mt-3 mb-0"
+                             th:if="${sale.status.name() == 'CANCELLED'}">
+                            <i class="bi bi-exclamation-triangle me-1"></i><br>
+                            <small>Esta venta ha sido cancelada</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumen -->
+                <div class="card shadow mt-4">
+                    <div class="card-header bg-success text-white">
+                        <i class="bi bi-clipboard-check me-1"></i> Resumen
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <div class="text-muted small">Total Items</div>
+                                    <div class="h4 text-primary fw-bold"
+                                         th:text="${#aggregates.sum(details.![quantity])}">0
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <div class="text-muted small">Total Venta</div>
+                                    <div class="h4 text-success fw-bold">
+                                        $<span th:text="${#numbers.formatDecimal(sale.total, 1, 0)}">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información del Cliente -->
+                <div class="card shadow mt-4" th:if="${sale.client != null}">
+                    <div class="card-header bg-info text-white">
+                        <i class="bi bi-person-badge me-1"></i> Cliente
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Nombre:</strong> <span th:text="${sale.client.name}"></span></p>
+                        <p><strong>Documento:</strong> <span th:text="${sale.client.document}"></span></p>
+                        <p th:if="${sale.client.phone}"><strong>Teléfono:</strong> <span
+                                th:text="${sale.client.phone}"></span></p>
+                        <p th:if="${sale.client.email}"><strong>Email:</strong> <span
+                                th:text="${sale.client.email}"></span></p>
+                        <p th:if="${sale.client.address}"><strong>Dirección:</strong> <span
+                                th:text="${sale.client.address}"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Scripts -->
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+<!-- Script adicional para exportar PDF (ejemplo) -->
+<script>
+    function exportToPDF() {
+        alert("Funcionalidad de exportación a PDF no implementada aún.");
+        // Aquí integrarías una librería como jsPDF
+    }
+</script>
+
+</body>
+</html>

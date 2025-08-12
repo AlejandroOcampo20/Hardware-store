@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}"></head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/topbar :: topbar}"></div>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div class="sidebar-overlay"></div>
+
+<main>
+    <div class="container-fluid px-4 py-3">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 text-dark">Impresión de Reportes</h1>
+            <a href="/reports" class="btn btn-secondary btn-sm d-flex align-items-center">
+                <i class="bi bi-arrow-left me-1"></i> Volver
+            </a>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header bg-orange text-white">
+                <i class="bi bi-funnel me-1"></i> Generar Reporte
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="reportType" class="form-label">Tipo de Reporte</label>
+                            <select id="reportType" class="form-select" required>
+                                <option value="">Selecciona un reporte</option>
+                                <option value="ventas-diarias">Ventas del Día</option>
+                                <option value="ventas-mensuales">Ventas del Mes</option>
+                                <option value="inventario-bajo">Inventario Bajo</option>
+                                <option value="clientes">Todos los Clientes</option>
+                                <option value="proveedores">Todos los Proveedores</option>
+                                <option value="empleados">Todos los Empleados</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="startDate" class="form-label">Fecha Inicio</label>
+                            <input type="date" id="startDate" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="endDate" class="form-label">Fecha Fin</label>
+                            <input type="date" id="endDate" class="form-control">
+                        </div>
+                    </div>
+                    <div class="mt-3 d-grid d-md-flex gap-2 justify-content-md-end">
+                        <button type="button" class="btn btn-outline-orange" onclick="previewReport()">
+                            <i class="bi bi-eye me-1"></i> Previsualizar
+                        </button>
+                        <button type="button" class="btn btn-orange" onclick="exportToPDF()">
+                            <i class="bi bi-file-pdf me-1"></i> Exportar PDF
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="reportPreview" class="card shadow">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h6 class="m-0"><i class="bi bi-file-earmark-text me-1"></i> Previsualización del Reporte</h6>
+            </div>
+            <div class="card-body p-4 text-center text-muted">
+                <i class="bi bi-file-earmark-text" style="font-size: 4rem;"></i>
+                <p class="mt-2">Selecciona un reporte y haz clic en "Exportar PDF".</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+<script th:src="@{/js/reports-print.js}"></script>
+
+</body>
+</html>

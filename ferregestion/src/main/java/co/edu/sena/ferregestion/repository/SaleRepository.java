@@ -21,4 +21,5 @@ public interface SaleRepository extends JpaRepository<Sale, Integer> {
 
     @Query("SELECT s FROM Sale s WHERE s.status = :status ORDER BY s.saleDate DESC")
     List<Sale> findByStatusOrderBySaleDateDesc(@Param("status") SaleStatus status);
+
 }
