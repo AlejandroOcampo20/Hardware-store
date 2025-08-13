@@ -24,7 +24,8 @@
       </a>
     </li>
     <li class="nav-item mb-1">
-      <a class="nav-link rounded" data-nav="products" href="/products">
+      <a class="nav-link rounded" data-nav="products" href="/products"
+         sec:authorize="hasAnyRole('ADMINISTRADOR', 'EMPLEADO')">
         <i class="bi bi-box-seam-fill me-2"></i> Inventario
       </a>
     </li>
