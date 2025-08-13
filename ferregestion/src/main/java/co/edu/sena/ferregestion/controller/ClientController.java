@@ -107,7 +107,9 @@ public class ClientController {
     @GetMapping("/inactive")
     public String listInactiveClients(Model model) {
         List<Client> inactiveClients = clientRepository.findByIsActiveFalse();
+        long totalInactive = inactiveClients.size();
         model.addAttribute("inactiveClients", inactiveClients);
+        model.addAttribute("totalInactive", totalInactive);
         return "clients/inactive";
     }
 
@@ -124,17 +126,17 @@ public class ClientController {
         return "redirect:/clients/inactive";
     }
 
-    @GetMapping("/search")
-    public String search(@RequestParam String query, Model model) {
-        model.addAttribute("clients", clientRepository.findByNameContainingIgnoreCase(query));
-        model.addAttribute("query", query);
-        return "clients/index";
-    }
-
-    
     @GetMapping("/inactive/search")
     public String searchInactive(@RequestParam String query, Model model) {
-        model.addAttribute("inactiveClients", clientRepository.findByNameContainingIgnoreCase(query));
+
+        List<Client> inactiveClients = clientRepository.findByIsActiveFalse()
+                .stream()
+                .filter(c -> c.getName().toLowerCase().contains(query.toLowerCase()))
+                .toList(); 
+
+        long totalInactive = clientRepository.findByIsActiveFalse().size(); 
+        model.addAttribute("inactiveClients", inactiveClients);
+        model.addAttribute("totalInactive", totalInactive);
         model.addAttribute("query", query);
         return "clients/inactive";
     }
