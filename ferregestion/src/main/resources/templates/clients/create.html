@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head}"></head>
+
+<body class="bg-light">
+
+    <!-- Topbar -->
+    <div th:replace="~{fragments/topbar :: topbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <main>
+        <div class="container-fluid px-4 py-3">
+
+            <!-- Título -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 text-dark">Nuevo Cliente</h1>
+                <a class="btn btn-secondary btn-sm" th:href="@{/clients}">
+                    <i class="bi bi-arrow-left me-1"></i> Volver
+                </a>
+            </div>
+
+            <!-- Alertas -->
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${error}">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                <span th:text="${error}"></span>
+                <button class="btn-close" data-bs-dismiss="alert" type="button"></button>
+            </div>
+            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${success}">
+                <i class="bi bi-check-circle-fill me-1"></i>
+                <span th:text="${success}"></span>
+                <button class="btn-close" data-bs-dismiss="alert" type="button"></button>
+            </div>
+
+            <!-- Formulario -->
+            <div class="card shadow">
+                <div class="card-body">
+                    <form th:action="@{/clients/create}" th:object="${client}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control" th:field="*{name}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Documento</label>
+                            <input type="text" class="form-control" th:field="*{document}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Teléfono</label>
+                            <input type="text" class="form-control" th:field="*{phone}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Dirección</label>
+                            <input type="text" class="form-control" th:field="*{address}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Correo Electrónico</label>
+                            <input type="email" class="form-control" th:field="*{email}" required>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save me-1"></i> Guardar
+                            </button>
+                            <a th:href="@{/clients}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+
+</html>

@@ -2,6 +2,9 @@ package co.edu.sena.ferregestion.controller;
 
 import co.edu.sena.ferregestion.model.Client;
 import co.edu.sena.ferregestion.repository.ClientRepository;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,7 +33,6 @@ public class ClientController {
     @PostMapping("/create")
     public String store(@ModelAttribute Client client, RedirectAttributes redirectAttributes) {
         try {
-            // Verificar si ya existe el documento (si se proporciona)
             if (client.getDocument() != null && !client.getDocument().isEmpty()) {
                 if (clientRepository.findByDocument(client.getDocument()).isPresent()) {
                     redirectAttributes.addFlashAttribute("error", "El documento ya está registrado");
@@ -52,14 +54,13 @@ public class ClientController {
         if (client == null) {
             return "redirect:/clients";
         }
-
         model.addAttribute("client", client);
         return "clients/edit";
     }
 
     @PostMapping("/edit/{id}")
     public String update(@PathVariable Integer id, @ModelAttribute Client client,
-                         RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         try {
             Client existingClient = clientRepository.findById(id).orElse(null);
             if (existingClient == null) {
@@ -67,7 +68,6 @@ public class ClientController {
                 return "redirect:/clients";
             }
 
-            // Verificar documento único (excluyendo el actual)
             if (client.getDocument() != null && !client.getDocument().isEmpty()) {
                 Client clientWithSameDoc = clientRepository.findByDocument(client.getDocument()).orElse(null);
                 if (clientWithSameDoc != null && !clientWithSameDoc.getId().equals(id)) {
@@ -95,7 +95,7 @@ public class ClientController {
                 return "redirect:/clients";
             }
 
-            client.setActive(false);
+            client.setIsActive(false);
             clientRepository.save(client);
             redirectAttributes.addFlashAttribute("success", "Cliente eliminado exitosamente");
         } catch (Exception e) {
@@ -104,10 +104,38 @@ public class ClientController {
         return "redirect:/clients";
     }
 
+    @GetMapping("/inactive")
+    public String listInactiveClients(Model model) {
+        List<Client> inactiveClients = clientRepository.findByIsActiveFalse();
+        model.addAttribute("inactiveClients", inactiveClients);
+        return "clients/inactive";
+    }
+
+    @PostMapping("/activate/{id}")
+    public String activateClient(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        Client client = clientRepository.findById(id).orElse(null);
+        if (client != null) {
+            client.setIsActive(true);
+            clientRepository.save(client);
+            redirectAttributes.addFlashAttribute("success", "Cliente activado correctamente");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Cliente no encontrado");
+        }
+        return "redirect:/clients/inactive";
+    }
+
     @GetMapping("/search")
     public String search(@RequestParam String query, Model model) {
         model.addAttribute("clients", clientRepository.findByNameContainingIgnoreCase(query));
         model.addAttribute("query", query);
         return "clients/index";
+    }
+
+    
+    @GetMapping("/inactive/search")
+    public String searchInactive(@RequestParam String query, Model model) {
+        model.addAttribute("inactiveClients", clientRepository.findByNameContainingIgnoreCase(query));
+        model.addAttribute("query", query);
+        return "clients/inactive";
     }
 }
