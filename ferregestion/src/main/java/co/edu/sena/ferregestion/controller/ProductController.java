@@ -95,7 +95,7 @@ public class ProductController {
                 redirectAttributes.addFlashAttribute("error", "Producto no encontrado");
                 return "redirect:/products";
             }
-            product.setActive(false);
+            product.setIsActive(false);
             productRepository.save(product);
             redirectAttributes.addFlashAttribute("success", "Producto eliminado exitosamente");
         } catch (Exception e) {
