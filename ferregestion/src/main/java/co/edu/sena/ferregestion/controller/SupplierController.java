@@ -21,6 +21,12 @@ public class SupplierController {
         return "suppliers/index";
     }
 
+    @GetMapping("/inactive")
+    public String inactive(Model model) {
+        model.addAttribute("suppliers", supplierRepository.findByIsActiveFalse());
+        return "suppliers/inactive"; 
+    }
+
     @GetMapping("/create")
     public String create(Model model) {
         model.addAttribute("supplier", new Supplier());
@@ -30,6 +36,7 @@ public class SupplierController {
     @PostMapping("/create")
     public String store(@ModelAttribute Supplier supplier, RedirectAttributes redirectAttributes) {
         try {
+            supplier.setIsActive(true);
             supplierRepository.save(supplier);
             redirectAttributes.addFlashAttribute("success", "Proveedor creado exitosamente");
         } catch (Exception e) {
@@ -61,6 +68,8 @@ public class SupplierController {
 
             supplier.setId(id);
             supplier.setCreatedAt(existingSupplier.getCreatedAt());
+            supplier.setIsActive(existingSupplier.getIsActive()); 
+            
             supplierRepository.save(supplier);
             redirectAttributes.addFlashAttribute("success", "Proveedor actualizado exitosamente");
         } catch (Exception e) {
@@ -78,7 +87,7 @@ public class SupplierController {
                 return "redirect:/suppliers";
             }
 
-            supplier.setActive(false);
+            supplier.setIsActive(false);
             supplierRepository.save(supplier);
             redirectAttributes.addFlashAttribute("success", "Proveedor eliminado exitosamente");
         } catch (Exception e) {
@@ -92,5 +101,23 @@ public class SupplierController {
         model.addAttribute("suppliers", supplierRepository.findByNameContainingIgnoreCase(query));
         model.addAttribute("query", query);
         return "suppliers/index";
+    }
+
+    @PostMapping("/activate/{id}")
+    public String activateSupplier(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            Supplier supplier = supplierRepository.findById(id).orElse(null);
+            if (supplier == null) {
+                redirectAttributes.addFlashAttribute("error", "Proveedor no encontrado.");
+                return "redirect:/suppliers";
+            }
+            
+            supplier.setIsActive(true);
+            supplierRepository.save(supplier);
+            redirectAttributes.addFlashAttribute("success", "Proveedor activado con éxito.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al activar el proveedor: " + e.getMessage());
+        }
+        return "redirect:/suppliers";
     }
 }

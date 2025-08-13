@@ -9,6 +9,10 @@ import java.util.Optional;
 @Repository
 public interface ClientRepository extends JpaRepository<Client, Integer> {
     List<Client> findByIsActiveTrue();
+
+    List<Client> findByIsActiveFalse();
+
     Optional<Client> findByDocument(String document);
+
     List<Client> findByNameContainingIgnoreCase(String name);
 }

@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     List<Employee> findByIsActiveTrue();
+    List<Employee> findByIsActiveFalse();
     Optional<Employee> findByDocument(String document);
     List<Employee> findByNameContainingIgnoreCase(String name);
 

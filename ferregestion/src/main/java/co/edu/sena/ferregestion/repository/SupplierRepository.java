@@ -8,5 +8,6 @@ import java.util.List;
 @Repository
 public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
     List<Supplier> findByIsActiveTrue();
+    List<Supplier> findByIsActiveFalse();
     List<Supplier> findByNameContainingIgnoreCase(String name);
 }

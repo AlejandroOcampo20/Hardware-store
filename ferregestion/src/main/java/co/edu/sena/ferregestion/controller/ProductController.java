@@ -17,7 +17,7 @@ public class ProductController {
     private ProductRepository productRepository;
 
     @Autowired
-    private SupplierRepository supplierRepository;
+    private SupplierRepository supplierRepository; 
 
     @GetMapping("")
     public String index(Model model) {
@@ -37,12 +37,10 @@ public class ProductController {
     @PostMapping("/create")
     public String store(@ModelAttribute Product product, RedirectAttributes redirectAttributes) {
         try {
-            // Verificar si ya existe el código
             if (productRepository.findByCode(product.getCode()).isPresent()) {
                 redirectAttributes.addFlashAttribute("error", "El código del producto ya existe");
                 return "redirect:/products/create";
             }
-
             productRepository.save(product);
             redirectAttributes.addFlashAttribute("success", "Producto creado exitosamente");
         } catch (Exception e) {
@@ -57,7 +55,6 @@ public class ProductController {
         if (product == null) {
             return "redirect:/products";
         }
-
         model.addAttribute("product", product);
         model.addAttribute("suppliers", supplierRepository.findByIsActiveTrue());
         model.addAttribute("categories", productRepository.findDistinctCategories());
@@ -74,7 +71,6 @@ public class ProductController {
                 return "redirect:/products";
             }
 
-            // Verificar código único (excluyendo el actual)
             Product productWithSameCode = productRepository.findByCode(product.getCode()).orElse(null);
             if (productWithSameCode != null && !productWithSameCode.getId().equals(id)) {
                 redirectAttributes.addFlashAttribute("error", "El código del producto ya existe");
@@ -99,7 +95,6 @@ public class ProductController {
                 redirectAttributes.addFlashAttribute("error", "Producto no encontrado");
                 return "redirect:/products";
             }
-
             product.setActive(false);
             productRepository.save(product);
             redirectAttributes.addFlashAttribute("success", "Producto eliminado exitosamente");

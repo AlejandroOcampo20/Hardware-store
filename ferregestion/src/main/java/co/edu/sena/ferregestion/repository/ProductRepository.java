@@ -9,9 +9,14 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
+
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.supplier WHERE p.isActive = true")
     List<Product> findByIsActiveTrue();
+
     Optional<Product> findByCode(String code);
+
     List<Product> findByNameContainingIgnoreCase(String name);
+
     List<Product> findByCategory(String category);
 
     @Query("SELECT p FROM Product p WHERE p.stock <= p.minStock AND p.isActive = true")
