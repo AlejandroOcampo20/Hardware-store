@@ -32,14 +32,12 @@ public class Supplier {
     @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL)
     private List<Product> products;
 
-    // Constructor, getters y setters
+    // Constructor
     public Supplier() {
         this.createdAt = LocalDateTime.now();
     }
 
-    // Getters y Setters...
-
-
+    // Getters y Setters
     public Integer getId() {
         return id;
     }
@@ -88,12 +86,20 @@ public class Supplier {
         this.createdAt = createdAt;
     }
 
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
     public Boolean getActive() {
         return isActive;
     }
 
     public void setActive(Boolean active) {
-        isActive = active;
+        this.isActive = active;
     }
 
     public List<Product> getProducts() {

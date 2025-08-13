@@ -2,6 +2,9 @@ package co.edu.sena.ferregestion.controller;
 
 import co.edu.sena.ferregestion.model.Employee;
 import co.edu.sena.ferregestion.repository.EmployeeRepository;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -57,7 +60,7 @@ public class EmployeeController {
 
     @PostMapping("/edit/{id}")
     public String update(@PathVariable Integer id, @ModelAttribute Employee employee,
-                         RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         try {
             Employee existingEmployee = employeeRepository.findById(id).orElse(null);
             if (existingEmployee == null) {
@@ -105,5 +108,37 @@ public class EmployeeController {
         model.addAttribute("employees", employeeRepository.findByNameContainingIgnoreCase(query));
         model.addAttribute("query", query);
         return "employees/index";
+    }
+
+    @GetMapping("/inactive")
+    public String listInactiveEmployees(Model model) {
+        List<Employee> inactiveEmployees = employeeRepository.findByIsActiveFalse();
+        long totalInactive = inactiveEmployees.size();
+        model.addAttribute("inactiveEmployees", inactiveEmployees);
+        model.addAttribute("totalInactive", totalInactive);
+        return "employees/inactive";
+    }
+
+    @GetMapping("/inactive/search")
+    public String searchInactiveEmployees(@RequestParam String query, Model model) {
+        List<Employee> inactiveEmployees = employeeRepository.findByNameContainingIgnoreCase(query);
+        long totalInactive = employeeRepository.findByIsActiveTrue().size();
+        model.addAttribute("inactiveEmployees", inactiveEmployees);
+        model.addAttribute("totalInactive", totalInactive);
+        model.addAttribute("query", query);
+        return "employees/inactive";
+    }
+
+    @PostMapping("/activate/{id}")
+    public String activateEmployee(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        Employee employee = employeeRepository.findById(id).orElse(null);
+        if (employee == null) {
+            redirectAttributes.addFlashAttribute("error", "Empleado no encontrado");
+            return "redirect:/employees/inactive";
+        }
+        employee.setActive(true);
+        employeeRepository.save(employee);
+        redirectAttributes.addFlashAttribute("success", "Empleado activado correctamente");
+        return "redirect:/employees/inactive";
     }
 }

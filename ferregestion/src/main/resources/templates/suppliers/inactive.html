@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head}"></head>
+
+<body class="bg-light">
+
+    <!-- Topbar -->
+    <div th:replace="~{fragments/topbar :: topbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Overlay para móvil -->
+    <div class="sidebar-overlay"></div>
+
+    <!-- Contenido principal -->
+    <main>
+        <div class="container-fluid px-4 py-3">
+
+            <!-- Título y botón -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 text-dark">Proveedores Inactivos</h1>
+                <a class="btn btn-secondary btn-sm d-flex align-items-center" th:href="@{/suppliers}">
+                    <i class="bi bi-arrow-left-circle me-1"></i> Volver
+                </a>
+            </div>
+
+            <!-- Resumen de proveedores inactivos -->
+            <div class="row g-4 mb-4">
+                <div class="col-xl-3 col-md-6">
+                    <div class="card border-left-danger shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-8">
+                                    <div class="text-muted small">Total Inactivos</div>
+                                    <div class="h5 mb-0 fw-bold" th:text="${#lists.size(suppliers)}">0</div>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <i class="bi bi-person-dash text-danger" style="font-size: 2rem;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de proveedores inactivos -->
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <i class="bi bi-person-dash-fill me-1"></i> Lista de Proveedores Inactivos
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Teléfono</th>
+                                    <th>Dirección</th>
+                                    <th>Correo Electrónico</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="supplier : ${suppliers}">
+                                    <td th:text="'#' + ${supplier.id}">#001</td>
+                                    <td th:text="${supplier.name}">Nombre</td>
+                                    <td th:text="${supplier.phone ?: 'N/A'}">00000000</td>
+                                    <td th:text="${supplier.address ?: 'N/A'}">Dirección</td>
+                                    <td th:text="${supplier.email ?: 'N/A'}">correo@example.com</td>
+                                    <td>
+                                        <form method="post" th:action="@{/suppliers/activate/{id}(id=${supplier.id})}">
+                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                            <button type="submit" class="btn btn-success btn-sm">
+                                                <i class="bi bi-arrow-clockwise"></i> Activar
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.size(suppliers) == 0}">
+                                    <td colspan="6" class="text-center text-muted">No hay proveedores inactivos</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+
+</html>
