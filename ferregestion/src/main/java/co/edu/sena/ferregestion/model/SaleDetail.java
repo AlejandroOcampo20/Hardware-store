@@ -1,7 +1,7 @@
 package co.edu.sena.ferregestion.model;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
+
 
 @Entity
 @Table(name = "sale_details")
